@@ -143,6 +143,9 @@ GEM
       activesupport (>= 6.1)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     importmap-rails (2.0.1)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -166,6 +169,8 @@ GEM
       net-pop
       net-smtp
     marcel (1.1.0)
+    mini_magick (5.4.0)
+      logger
     mini_mime (1.1.5)
     minitest (5.25.1)
     msgpack (1.7.2)
@@ -268,6 +273,9 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.1)
+    ruby-vips (2.3.0)
+      ffi (~> 1.12)
+      logger
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
@@ -338,6 +346,7 @@ DEPENDENCIES
   debug
   dotenv-rails
   font-awesome-sass (~> 6.1)
+  image_processing (~> 1.2)
   importmap-rails
   jbuilder
   logger (~> 1.6)
