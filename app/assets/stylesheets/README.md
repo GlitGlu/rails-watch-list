@@ -1,48 +1,34 @@
 First of all make sure you've created a rails app
 
 ```bash
-rails new APP_NAME -d postgresql
+rails new -j webpack APP_NAME
 ```
 
 ## Setup
 
-Rails 8 uses Propshaft by default, but we need Sprockets for SCSS compilation. Update your `Gemfile`:
+Ensure you have Bootstrap and it's dependencies:
+
+```bash
+yarn add bootstrap @popperjs/core
+```
+
+Ensure you have the following gems in your Rails `Gemfile`:
 
 ```ruby
-# Gemfile
-
-# REMOVE this line:
-# gem "propshaft"
-
-# ADD these gems:
-gem "sprockets-rails"
+# Uncomment this gem already present in your Gemfile
 gem "sassc-rails"
-gem "bootstrap", "~> 5.3"
+
+# Add those ones
 gem "autoprefixer-rails"
 gem "font-awesome-sass", "~> 6.1"
 gem "simple_form"
 ```
 
-Create the Sprockets manifest file (Rails 8 doesn't have this by default):
+Add this line to `assets.rb`:
 
-```bash
-mkdir -p app/assets/config
-touch app/assets/config/manifest.js
-```
-
-```js
-// app/assets/config/manifest.js
-//= link_tree ../images
-//= link_tree ../../javascript .js
-//= link_directory ../stylesheets .css
-```
-
-Then replace Rails' stylesheets by Le Wagon's stylesheets:
-
-```bash
-rm -rf app/assets/stylesheets
-curl -L https://github.com/lewagon/rails-stylesheets/archive/rails-8.zip > stylesheets.zip
-unzip stylesheets.zip -d app/assets && rm stylesheets.zip && mv app/assets/rails-stylesheets-rails-8 app/assets/stylesheets
+```ruby
+# Add additional assets to the asset load path.
+Rails.application.config.assets.paths << Rails.root.join("node_modules")
 ```
 
 In your terminal, generate Simple Form Bootstrap config:
@@ -52,14 +38,12 @@ bundle install
 rails generate simple_form:install --bootstrap
 ```
 
-Update your layout to use the correct stylesheet tag:
+Then replace Rails' stylesheets by Le Wagon's stylesheets:
 
-```erb
-<!-- app/views/layouts/application.html.erb -->
-<!-- replace this line -->
-<%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-<!-- with this line -->
-<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+```bash
+rm -rf app/assets/stylesheets
+curl -L https://github.com/lewagon/stylesheets/archive/master.zip > stylesheets.zip
+unzip stylesheets.zip -d app/assets && rm stylesheets.zip && mv app/assets/rails-stylesheets-master app/assets/stylesheets
 ```
 
 **On Ubuntu/Windows**: if the `unzip` command returns an error, please install it first by running `sudo apt install unzip`.
@@ -68,39 +52,11 @@ Note that when you update the colors in `config/colors`, the (text) color of you
 
 ## Bootstrap JS
 
-Install Bootstrap JS:
-```bash
-importmap pin bootstrap
-```
-
 Import Bootstrap:
 
 ```js
-// app/javascript/application.js
+// app/javascript/packs/application.js
 import "bootstrap"
-import "@popperjs/core"
-```
-
-Add the Bootstrap JS files to your manifest:
-
-```js
-// app/assets/config/manifest.js
-//= link_tree ../images
-//= link_tree ../../javascript .js
-//= link_directory ../stylesheets .css
-//= link popper.js
-//= link bootstrap.min.js
-```
-
-```rb
-# config/importmap.rb
-
-# replace these lines:
-# pin "bootstrap" # @5.3.2
-# pin "@popperjs/core", to: "@popperjs--core.js" # @2.11.8
-# with this:
-pin "bootstrap", to: "bootstrap.min.js", preload: true
-pin "@popperjs/core", to: "popper.js", preload: true
 ```
 
 ## Adding new `.scss` files
@@ -116,7 +72,7 @@ Look at your main `application.scss` file to see how SCSS files are imported. Th
 @import "config/bootstrap_variables";
 
 // External libraries
-@import "bootstrap";
+@import "bootstrap/scss/bootstrap"; // from the node_modules
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
